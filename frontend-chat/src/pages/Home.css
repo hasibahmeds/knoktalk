@@ -5083,3 +5083,46 @@ textarea:focus {
         transform: translateY(0);
     }
 }
+/* Pagination Styles */
+.loading-more-messages {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.spinner-small {
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.load-more-btn {
+    width: calc(100% - 16px);
+    margin: 8px;
+    padding: 8px;
+    background: var(--background-input);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.load-more-btn:hover:not(:disabled) {
+    background: var(--primary-color);
+    color: white;
+}
+
+.load-more-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
