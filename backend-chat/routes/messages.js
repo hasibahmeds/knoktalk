@@ -28,18 +28,9 @@ router.get('/:chatId/search', async (req, res) => {
     }
 });
 
-// Get messages for a chat with pagination
+// Get messages for a chat
 router.get('/:chatId', async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 30;
-        const skip = (page - 1) * limit;
-
-        const totalMessages = await Message.countDocuments({
-            chatId: req.params.chatId,
-            isDeleted: false
-        });
-
         const messages = await Message.find({
             chatId: req.params.chatId,
             isDeleted: false
@@ -53,17 +44,9 @@ router.get('/:chatId', async (req, res) => {
                     select: 'uid email displayName photoURL'
                 }
             })
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(limit);
+            .sort({ createdAt: 1 });
 
-        const hasMore = totalMessages > skip + messages.length;
-
-        res.set('X-Total-Count', totalMessages);
-        res.set('X-Has-More', hasMore.toString());
-        
-        // Return messages in chronological order for the frontend
-        res.json(messages.reverse());
+        res.json(messages);
     } catch (error) {
         console.error('Get messages error:', error);
         res.status(500).json({ error: 'Server error' });

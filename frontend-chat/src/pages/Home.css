@@ -94,7 +94,7 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    letter-spacing: -1px;
+    letter-spacing: -0.5px;
     filter: drop-shadow(0 4px 8px rgba(99, 102, 241, 0.3));
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -486,7 +486,8 @@ textarea:focus {
 .reject-btn {
     width: 28px;
     height: 28px;
-    border-radius: 50%;
+    /* border-radius: 50%; */
+    border-radius: 20%;
     border: none;
     display: flex;
     align-items: center;
@@ -498,12 +499,16 @@ textarea:focus {
 
 .accept-btn {
     background: var(--success-color);
+    /* background: transparent; */
     color: white;
+    /* color: var(--success-color); */
 }
 
 .reject-btn {
     background: var(--error-color);
+    /* background: transparent; */
     color: white;
+    /* color: var(--error-color); */
 }
 
 .accept-btn:hover,
@@ -2324,7 +2329,7 @@ textarea:focus {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    letter-spacing: -2px;
+    letter-spacing: -1px;
     filter: drop-shadow(0 4px 12px rgba(99, 102, 241, 0.3));
     background-size: 200% auto;
     animation: textGradient 5s ease infinite;
@@ -5082,47 +5087,4 @@ textarea:focus {
         opacity: 1;
         transform: translateY(0);
     }
-}
-/* Pagination Styles */
-.loading-more-messages {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px;
-    color: var(--text-secondary);
-    font-size: 12px;
-}
-
-.spinner-small {
-    width: 14px;
-    height: 14px;
-    border: 2px solid var(--border-color);
-    border-top-color: var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-.load-more-btn {
-    width: calc(100% - 16px);
-    margin: 8px;
-    padding: 8px;
-    background: var(--background-input);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    color: var(--text-secondary);
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.load-more-btn:hover:not(:disabled) {
-    background: var(--primary-color);
-    color: white;
-}
-
-.load-more-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
 }

@@ -141,14 +141,7 @@ const Home = () => {
         messages: false
     });
 
-    // Pagination states
-    const [messagePage, setMessagePage] = useState(1);
-    const [hasMoreMessages, setHasMoreMessages] = useState(true);
-    const [loadingMoreMessages, setLoadingMoreMessages] = useState(false);
-
-    const [userPage, setUserPage] = useState(1);
-    const [hasMoreUsers, setHasMoreUsers] = useState(true);
-    const [loadingMoreUsers, setLoadingMoreUsers] = useState(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const messagesEndRef = useRef(null);
     const searchInputRef = useRef(null);
@@ -295,39 +288,24 @@ const Home = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Fetch all users with pagination
-    const fetchUsers = async (page = 1) => {
-        try {
-            if (page === 1) {
-                setLoading(prev => ({ ...prev, users: true }));
-            } else {
-                setLoadingMoreUsers(true);
-            }
-
-            const response = await fetch(`https://knoktalkend.onrender.com/api/users/all/${currentUser.uid}?page=${page}&limit=20`);
-            const data = await response.json();
-
-            if (page === 1) {
-                setUsers(data);
-            } else {
-                setUsers(prev => [...prev, ...data]);
-            }
-
-            setHasMoreUsers(response.headers.get('X-Has-More') === 'true');
-            setUserPage(page);
-        } catch (error) {
-            console.error('Error fetching users:', error);
-        } finally {
-            setLoading(prev => ({ ...prev, users: false }));
-            setLoadingMoreUsers(false);
-        }
-    };
-
+    // Fetch all users
     useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                setLoading(prev => ({ ...prev, users: true }));
+                const response = await fetch(`https://knoktalkend.onrender.com/api/users/all/${currentUser.uid}`);
+                const data = await response.json();
+                setUsers(data);
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            } finally {
+                setLoading(prev => ({ ...prev, users: false }));
+            }
+        };
         if (currentUser) {
-            fetchUsers(1);
+            fetchUsers();
         }
-    }, [currentUser]);
+    }, [currentUser, refreshTrigger]);
 
     // Fetch user's chats
     useEffect(() => {
@@ -346,68 +324,31 @@ const Home = () => {
         if (currentUser) {
             fetchChats();
         }
-    }, [currentUser]);
+    }, [currentUser, refreshTrigger]);
 
-    // Fetch messages with pagination
-    const fetchMessages = async (page = 1, isLoadMore = false) => {
-        if (!selectedChat) return;
+    // Fetch messages when chat is selected
+    useEffect(() => {
+        const fetchMessages = async () => {
+            if (selectedChat) {
+                try {
+                    setLoading(prev => ({ ...prev, messages: true }));
+                    const response = await fetch(`https://knoktalkend.onrender.com/api/messages/${selectedChat._id}`);
+                    const data = await response.json();
+                    setMessages(data);
 
-        try {
-            if (!isLoadMore) {
-                setLoading(prev => ({ ...prev, messages: true }));
-            } else {
-                setLoadingMoreMessages(true);
-            }
-
-            const response = await fetch(`https://knoktalkend.onrender.com/api/messages/${selectedChat._id}?page=${page}&limit=30`);
-            const data = await response.json();
-
-            if (!isLoadMore) {
-                setMessages(data);
-                // Scroll to bottom on initial load
-                setTimeout(() => {
-                    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
-                }, 100);
-            } else {
-                // Prepend older messages and maintain scroll position
-                const container = document.querySelector('.messages');
-                const oldScrollHeight = container?.scrollHeight || 0;
-
-                setMessages(prev => [...data, ...prev]);
-
-                // Keep scroll position relative to the last message before update
-                setTimeout(() => {
-                    if (container) {
-                        const newScrollHeight = container.scrollHeight;
-                        container.scrollTop = newScrollHeight - oldScrollHeight;
+                    // Check if the other user is blocked
+                    const otherUser = selectedChat.participants.find(p => p.uid !== currentUser.uid);
+                    if (otherUser) {
+                        checkBlockedStatus(otherUser.uid);
                     }
-                }, 0);
-            }
-
-            setHasMoreMessages(response.headers.get('X-Has-More') === 'true');
-            setMessagePage(page);
-
-            if (!isLoadMore) {
-                // Check if the other user is blocked
-                const otherUser = selectedChat.participants.find(p => p.uid !== currentUser.uid);
-                if (otherUser) {
-                    checkBlockedStatus(otherUser.uid);
+                } catch (error) {
+                    console.error('Error fetching messages:', error);
+                } finally {
+                    setLoading(prev => ({ ...prev, messages: false }));
                 }
             }
-        } catch (error) {
-            console.error('Error fetching messages:', error);
-        } finally {
-            setLoading(prev => ({ ...prev, messages: false }));
-            setLoadingMoreMessages(false);
-        }
-    };
-
-    useEffect(() => {
-        if (selectedChat) {
-            fetchMessages(1);
-            setMessagePage(1);
-            setHasMoreMessages(true);
-        }
+        };
+        fetchMessages();
         setSelectedMessageIds([]);
         setReplyingToMessage(null);
         setIsSearching(false);
@@ -415,13 +356,7 @@ const Home = () => {
         setSearchResults([]);
     }, [selectedChat]);
 
-    // Handle scroll for infinite messages
-    const handleScroll = (e) => {
-        const { scrollTop } = e.currentTarget;
-        if (scrollTop === 0 && hasMoreMessages && !loadingMoreMessages) {
-            fetchMessages(messagePage + 1, true);
-        }
-    };
+
 
     // Socket listeners — chat
     useEffect(() => {
@@ -1723,10 +1658,12 @@ const Home = () => {
                         onClick={() => {
                             setSelectedChat(null);
                             if (window.innerWidth <= 768) setSidebarOpen(false);
+                            setRefreshTrigger(prev => prev + 1);
+                            if (currentUser) fetchDbUser(currentUser.uid);
                         }}
                         className="sidebar-logo"
                     >
-                        KnokTalk
+                        Knok Talk
                     </h2>
                     <div className="sidebar-actions">
                         <button
@@ -1848,15 +1785,6 @@ const Home = () => {
                                 )}
                             </div>
                         ))}
-                        {hasMoreUsers && (
-                            <button
-                                className="load-more-btn"
-                                onClick={() => fetchUsers(userPage + 1)}
-                                disabled={loadingMoreUsers}
-                            >
-                                {loadingMoreUsers ? 'Loading...' : 'Show More'}
-                            </button>
-                        )}
                     </div>
                 )}
 
@@ -2287,13 +2215,7 @@ const Home = () => {
                             </div>
                         )}
 
-                        <div className={`messages ${isBlocked ? 'disabled' : ''}`} onScroll={handleScroll}>
-                            {loadingMoreMessages && (
-                                <div className="loading-more-messages">
-                                    <div className="spinner-small"></div>
-                                    <span>Loading previous messages...</span>
-                                </div>
-                            )}
+                        <div className={`messages ${isBlocked ? 'disabled' : ''}`}>
                             {isBlocked && (
                                 <div className="blocked-notice">
                                     <FiLock />
@@ -2600,7 +2522,7 @@ const Home = () => {
                             </div>
 
                             <div className="no-chat-text-content">
-                                <h1>Welcome to KnokTalk</h1>
+                                <h1>Welcome to Knok Talk</h1>
                                 <p>Select a friend from the sidebar or search to start a conversation.</p>
                             </div>
                         </div>

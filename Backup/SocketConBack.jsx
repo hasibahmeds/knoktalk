@@ -13,7 +13,7 @@ export const SocketProvider = ({ children }) => {
 
     useEffect(() => {
         // Initialize socket connection
-        socketRef.current = io('http://localhost:5000');
+        socketRef.current = io('https://knoktalkend.onrender.com');
 
         socketRef.current.on('connect', () => {
             console.log('Connected to socket server');

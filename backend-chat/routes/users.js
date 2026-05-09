@@ -59,24 +59,12 @@ router.get('/me/:uid', async (req, res) => {
     }
 });
 
-// Get all users (except current user) with pagination
+// Get all users (except current user)
 router.get('/all/:uid', async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 20;
-        const skip = (page - 1) * limit;
-
-        const totalUsers = await User.countDocuments({ uid: { $ne: req.params.uid } });
-        
         const users = await User.find({ uid: { $ne: req.params.uid } })
-            .select('uid email displayName photoURL friends friendRequests')
-            .skip(skip)
-            .limit(limit);
+            .select('uid email displayName photoURL friends friendRequests');
 
-        const hasMore = totalUsers > skip + users.length;
-
-        res.set('X-Total-Count', totalUsers);
-        res.set('X-Has-More', hasMore.toString());
         res.json(users);
     } catch (error) {
         console.error('Get users error:', error);

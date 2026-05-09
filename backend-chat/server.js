@@ -29,9 +29,7 @@ const io = new Server(server, {
 });
 
 // Middleware
-app.use(cors({
-    exposedHeaders: ['X-Total-Count', 'X-Has-More']
-}));
+app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
