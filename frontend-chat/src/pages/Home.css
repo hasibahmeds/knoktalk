@@ -2329,7 +2329,7 @@ textarea:focus {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    letter-spacing: -2px;
+    letter-spacing: -1.5px;
     filter: drop-shadow(0 4px 12px rgba(99, 102, 241, 0.3));
     background-size: 200% auto;
     animation: textGradient 5s ease infinite;
