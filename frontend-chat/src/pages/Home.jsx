@@ -10,9 +10,13 @@ import {
     FiVideo, FiVideoOff, FiMicOff, FiPhoneOff, FiPhone,
     FiChevronDown, FiChevronUp, FiPhoneIncoming, FiPhoneCall, FiCornerUpLeft
 } from 'react-icons/fi';
+import { AiOutlineHome } from "react-icons/ai";
+import { TbMessageChatbotFilled } from "react-icons/tb";
+import { TiMessages } from "react-icons/ti";
 import { HiArrowPathRoundedSquare } from "react-icons/hi2";
 import { PiPlayCircleDuotone, PiPauseCircleDuotone } from "react-icons/pi";
 import EmojiPicker from '../components/EmojiPicker';
+
 import './Home.css';
 
 
@@ -716,7 +720,7 @@ const Home = () => {
                         );
                         const messagesData = await messagesResponse.json();
                         setMessages(messagesData);
-                        alert(`Removed ${data.deletedCount} message(s)`);
+
                     }
                 } catch (error) {
                     console.error('Error removing messages:', error);
@@ -1666,6 +1670,14 @@ const Home = () => {
                         Knok Talk
                     </h2>
                     <div className="sidebar-actions">
+
+                        <button
+                            className="icon-btn ci-logout-btn"
+                            onClick={() => window.location.href = 'https://hasibahmeds.github.io/joinknoktalk/'}
+                            title="Join Knok Talk"
+                        >
+                            <AiOutlineHome />
+                        </button>
                         <button
                             className={`icon-btn ${showUsers ? 'active' : ''}`}
                             onClick={() => {
@@ -1689,6 +1701,7 @@ const Home = () => {
                         <button className="icon-btn" onClick={handleLogout} title="Logout">
                             <FiLogOut />
                         </button>
+
                     </div>
                 </div>
 
@@ -2510,7 +2523,8 @@ const Home = () => {
                             <div className="no-chat-3d-wrapper">
                                 <div className="no-chat-3d-badge">
                                     <div className="badge-layer front">
-                                        <FiMessageCircle />
+                                        {/* <TiMessages /> */}
+                                        <TbMessageChatbotFilled />
                                     </div>
                                     <div className="badge-layer middle"></div>
                                     <div className="badge-layer back"></div>

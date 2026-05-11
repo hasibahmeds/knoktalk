@@ -1,5 +1,3 @@
-// without refetching data
-
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
@@ -12,6 +10,7 @@ import {
     FiVideo, FiVideoOff, FiMicOff, FiPhoneOff, FiPhone,
     FiChevronDown, FiChevronUp, FiPhoneIncoming, FiPhoneCall, FiCornerUpLeft
 } from 'react-icons/fi';
+import { TiMessages } from "react-icons/ti";
 import { HiArrowPathRoundedSquare } from "react-icons/hi2";
 import { PiPlayCircleDuotone, PiPauseCircleDuotone } from "react-icons/pi";
 import EmojiPicker from '../components/EmojiPicker';
@@ -142,6 +141,8 @@ const Home = () => {
         chats: false,
         messages: false
     });
+
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const messagesEndRef = useRef(null);
     const searchInputRef = useRef(null);
@@ -305,7 +306,7 @@ const Home = () => {
         if (currentUser) {
             fetchUsers();
         }
-    }, [currentUser]);
+    }, [currentUser, refreshTrigger]);
 
     // Fetch user's chats
     useEffect(() => {
@@ -324,7 +325,7 @@ const Home = () => {
         if (currentUser) {
             fetchChats();
         }
-    }, [currentUser]);
+    }, [currentUser, refreshTrigger]);
 
     // Fetch messages when chat is selected
     useEffect(() => {
@@ -716,7 +717,7 @@ const Home = () => {
                         );
                         const messagesData = await messagesResponse.json();
                         setMessages(messagesData);
-                        alert(`Removed ${data.deletedCount} message(s)`);
+
                     }
                 } catch (error) {
                     console.error('Error removing messages:', error);
@@ -1658,6 +1659,8 @@ const Home = () => {
                         onClick={() => {
                             setSelectedChat(null);
                             if (window.innerWidth <= 768) setSidebarOpen(false);
+                            setRefreshTrigger(prev => prev + 1);
+                            if (currentUser) fetchDbUser(currentUser.uid);
                         }}
                         className="sidebar-logo"
                     >
@@ -2508,7 +2511,8 @@ const Home = () => {
                             <div className="no-chat-3d-wrapper">
                                 <div className="no-chat-3d-badge">
                                     <div className="badge-layer front">
-                                        <FiMessageCircle />
+                                        {/* <FiMessageCircle /> */}
+                                        <TiMessages />
                                     </div>
                                     <div className="badge-layer middle"></div>
                                     <div className="badge-layer back"></div>
@@ -2875,4 +2879,3 @@ const Home = () => {
 };
 
 export default Home;
-

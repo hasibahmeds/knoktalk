@@ -94,7 +94,7 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    letter-spacing: -0.5px;
+    letter-spacing: -1px;
     filter: drop-shadow(0 4px 8px rgba(99, 102, 241, 0.3));
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2329,7 +2329,7 @@ textarea:focus {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    letter-spacing: -1px;
+    letter-spacing: -2px;
     filter: drop-shadow(0 4px 12px rgba(99, 102, 241, 0.3));
     background-size: 200% auto;
     animation: textGradient 5s ease infinite;
@@ -4279,7 +4279,7 @@ textarea:focus {
 
 .accept-call-btn:hover {
     background: #059669;
-    transform: scale(1.12);
+    /* transform: scale(1.12); */
 }
 
 .decline-call-btn {
@@ -4290,7 +4290,7 @@ textarea:focus {
 
 .decline-call-btn:hover {
     background: #dc2626;
-    transform: scale(1.12);
+    /* transform: scale(1.12); */
 }
 
 /* ── Active Call Full-Screen Overlay ──────────────────────────────────────── */
@@ -4393,7 +4393,8 @@ textarea:focus {
     font-size: 22px;
     font-weight: 700;
     color: var(--text-primary);
-    margin: 0;
+    /* margin: 0; */
+    margin-top: 70px;
 }
 
 .call-waiting-status {
@@ -4523,7 +4524,7 @@ textarea:focus {
 
 .call-control-btn:hover {
     background: rgba(255, 255, 255, 0.22);
-    transform: scale(1.08);
+    /* transform: scale(1.08); */
 }
 
 .call-control-btn.toggled-off {
@@ -4546,8 +4547,8 @@ textarea:focus {
 
 .end-call-btn:hover {
     background: #dc2626 !important;
-    transform: scale(1.1) !important;
-    box-shadow: 0 0 36px rgba(239, 68, 68, 0.7);
+    /* transform: scale(1.1) !important; */
+    /* box-shadow: 0 0 36px rgba(239, 68, 68, 0.7); */
 }
 
 @media (max-width: 576px) {
@@ -5087,4 +5088,78 @@ textarea:focus {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* ==========================================================================
+   Responsive Breakpoints (USER Requested)
+   ========================================================================== */
+
+/* xs (< 576px) */
+@media (max-width: 575.98px) {
+    .sidebar {
+        width: 100% !important;
+    }
+
+    .sidebar-header h2.sidebar-logo {
+        font-size: 18px;
+    }
+
+    .sidebar-actions {
+        gap: 6px;
+    }
+
+    .icon-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 13px;
+    }
+}
+
+/* sm (≥ 576px) */
+@media (min-width: 576px) {
+    .sidebar {
+        width: 280px;
+    }
+}
+
+/* md (≥ 768px) */
+@media (min-width: 768px) {
+    .sidebar {
+        width: 300px;
+    }
+}
+
+/* lg (≥ 992px) */
+@media (min-width: 992px) {
+    .sidebar {
+        width: 320px;
+    }
+
+    .sidebar-header h2.sidebar-logo {
+        font-size: 20px;
+    }
+}
+
+/* xl (≥ 1200px) */
+@media (min-width: 1200px) {
+    .sidebar {
+        width: 340px;
+    }
+
+    .sidebar-header h2.sidebar-logo {
+        font-size: 22px;
+    }
+}
+
+/* xxl (≥ 1400px) */
+@media (min-width: 1400px) {
+    .sidebar {
+        width: 360px;
+    }
+}
+
+/* Custom styling for CiLogout button to ensure it matches perfectly */
+.ci-logout-btn {
+    font-size: 18px !important;
+    /* Ci icons often need a slightly larger font size to match Fi icons visually */
 }
